@@ -1,0 +1,1 @@
+/usr/bin/cc  -g   CMakeFiles/tp1.dir/main.c.o CMakeFiles/tp1.dir/codon.c.o CMakeFiles/tp1.dir/codigo_genetico.c.o CMakeFiles/tp1.dir/socket.c.o CMakeFiles/tp1.dir/servidor.c.o CMakeFiles/tp1.dir/cliente.c.o CMakeFiles/tp1.dir/buffer.c.o  -o tp1 
