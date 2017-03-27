@@ -12,7 +12,7 @@
 #include "codigo_genetico.h"
 #include "socket.h"
 #define MAX_LEN_RESPUESTA 255
-static typedef struct{
+typedef struct{
     aminoacido_t aminoacido;
     size_t cantidad_contados;
 }contador_aminoacidos_t;
@@ -30,4 +30,6 @@ int servidor_crear(servidor_t *self,unsigned short port);
 int servidor_destruir(servidor_t *self);
 int servidor_recibir_datos(servidor_t *self);
 int servidor_procesar(servidor_t *self);
+int servidor_enviar_datos(servidor_t *self);
+
 #endif //TP1_SERVIDOR_H

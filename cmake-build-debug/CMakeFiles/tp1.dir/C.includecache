@@ -47,6 +47,8 @@ codon.h
 /home/tg/FIUBA/taller/tp1/tp1/codon.h
 
 /home/tg/FIUBA/taller/tp1/tp1/servidor.c
+stdlib.h
+-
 servidor.h
 /home/tg/FIUBA/taller/tp1/tp1/servidor.h
 

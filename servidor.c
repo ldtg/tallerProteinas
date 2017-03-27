@@ -73,11 +73,14 @@ int servidor_recibir_datos(servidor_t *self) {
 
 int servidor_procesar(servidor_t *self) {
     int cant_aminoacidos_distintos = 0;
+    int error_generar_respuesta = ERROR;
 
     qsort((void*)&(self->contador_aminoacidos[0]),CANT_AMINOACIDOS,sizeof(contador_aminoacidos_t),comparar_contador);
-    cant_aminoacidos_distintos = contar_aminoacidos_distintos(&(self->contador_aminoacidos));
-    generar_respuesta(self);
+    cant_aminoacidos_distintos = contar_aminoacidos_distintos(self->contador_aminoacidos);
+    error_generar_respuesta = generar_respuesta(self);
 
+    if(error_generar_respuesta == ERROR)
+        return ERROR;
     return OK;
 }
 
@@ -123,14 +126,16 @@ static int generar_respuesta(servidor_t *self){
         else if (self->cantidad_aminoacidos_distintos == 1){
             snprintf(self->respuesta,MAX_LEN_RESPUESTA,"Cantidad de proteínas encontradas: %d\n"
                              "Aminoácidos más frecuentes:\n"
-                             "1) %s: %d\n", self->cantidad_proteinas, AMINOACIDO_STRING[self->contador_aminoacidos[0].aminoacido]);
+                             "1) %s: %d\n", self->cantidad_proteinas, AMINOACIDO_STRING[self->contador_aminoacidos[0].aminoacido],
+                                self->contador_aminoacidos[0]);
             return OK;
         } else{
             snprintf(self->respuesta,MAX_LEN_RESPUESTA,"Cantidad de proteínas encontradas: %d\n"
                              "Aminoácidos más frecuentes:\n"
                              "1) %s: %d\n"
-                             "2) %s: %d\n", self->cantidad_proteinas,AMINOACIDO_STRING[self->contador_aminoacidos[0].aminoacido],
-                     AMINOACIDO_STRING[self->contador_aminoacidos[1].aminoacido]);
+                             "2) %s: %d\n", self->cantidad_proteinas, AMINOACIDO_STRING[self->contador_aminoacidos[0].aminoacido],
+                     self->contador_aminoacidos[0], AMINOACIDO_STRING[self->contador_aminoacidos[1].aminoacido],
+                     self->contador_aminoacidos[1]);
             return OK;
         }
     } else {
@@ -139,8 +144,11 @@ static int generar_respuesta(servidor_t *self){
                 "1) %s: %d\n"
                 "2) %s: %d\n"
                 "3) %s: %d\n", self->cantidad_proteinas,AMINOACIDO_STRING[self->contador_aminoacidos[0].aminoacido],
+                 self->contador_aminoacidos[0],
                  AMINOACIDO_STRING[self->contador_aminoacidos[1].aminoacido],
-                AMINOACIDO_STRING[self->contador_aminoacidos[2].aminoacido]);
+                 self->contador_aminoacidos[1],
+                AMINOACIDO_STRING[self->contador_aminoacidos[2].aminoacido],
+                 self->contador_aminoacidos[2]);
         return OK;
     }
     return ERROR;
