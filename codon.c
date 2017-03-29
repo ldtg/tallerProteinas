@@ -57,7 +57,7 @@ bool codon_es_inicio(codon_t *self){
 }
 
 bool codon_es_igual(codon_t *self,char* letras){
-    return strncmp(self->letras,letras,3);
+    return strncmp(self->letras,letras,3) == 0;
 }
 
 static int a_letras(unsigned char byte, char *letras){
@@ -65,19 +65,19 @@ static int a_letras(unsigned char byte, char *letras){
     for(int i=0;i<=4;i=i+2){
         switch(obtener_la_base(byte,i)){
             case BASE_A:{
-                aux[i]='A';
+                aux[2-i/2]='A';
                 break;
             }
             case BASE_U:{
-                aux[i]='U';
+                aux[2-i/2]='U';
                 break;
             }
             case BASE_G:{
-                aux[i]='G';
+                aux[2-i/2]='G';
                 break;
             }
             case BASE_C:{
-                aux[i]='C';
+                aux[2-i/2]='C';
                 break;
             }
             default:{
@@ -119,9 +119,9 @@ static unsigned char a_byte(char* letras){
 }
 
 static bool es_alto(char* letras){
-    return strncmp(letras,ALTO_1,3)||strncmp(letras,ALTO_2,3)||strncmp(letras,ALTO_3,3);
+    return (strncmp(letras,ALTO_1,3) == 0)||(strncmp(letras,ALTO_2,3)== 0)||(strncmp(letras,ALTO_3,3)== 0);
 }
 
 static bool es_inicio(char* letras){
-    return strncmp(letras,INICIO,3);
+    return (strncmp(letras,INICIO,3) == 0);
 }

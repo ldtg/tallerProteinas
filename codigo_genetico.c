@@ -34,46 +34,51 @@ int codigo_genetico_destruir(){
 }
 
 
-aminoacido_t codigo_genetico_procesar(codon_t *codon){
+int codigo_genetico_procesar(codon_t *codon, aminoacido_t *salida){
+
+    int err = ERROR;
     if(es_fenilanina(codon))
-        return FENILALANINA;
+        err = aminoacido_crear(salida, FENILALANINA);
     if(es_leucina(codon))
-        return LEUCINA;
+        err = aminoacido_crear(salida, LEUCINA);
     if(es_serina(codon))
-        return SERINA;
+        err = aminoacido_crear(salida, SERINA);
     if(es_tirosina(codon))
-        return TIROSINA;
+        err = aminoacido_crear(salida, TIROSINA);
     if(es_cisteina(codon))
-        return CISTEINA;
+        err = aminoacido_crear(salida, CISTEINA);
     if(es_triptofano(codon))
-        return TRIPTOFONO;
+        err = aminoacido_crear(salida, TRIPTOFONO);
     if(es_prolina(codon))
-        return PROLINA;
+        err = aminoacido_crear(salida, PROLINA);
     if(es_histidina(codon))
-        return HISTIDINA;
+        err = aminoacido_crear(salida, HISTIDINA);
     if(es_glutamico(codon))
-        return ACIDO_GLUTAMICO;
+        err = aminoacido_crear(salida, ACIDO_GLUTAMICO);
     if(es_isoleucina(codon))
-        return ISOLEUCINA;
+        err = aminoacido_crear(salida, ISOLEUCINA);
     if(es_metionina(codon))
-        return METIONINA;
+        err = aminoacido_crear(salida, METIONINA);
     if(es_treonina(codon))
-        return TREONINA;
+        err = aminoacido_crear(salida, TREONINA);
     if(es_asparagina(codon))
-        return ASPARAGINA;
+        err = aminoacido_crear(salida, ASPARAGINA);
     if(es_lisina(codon))
-        return LISINA;
+        err = aminoacido_crear(salida, LISINA);
     if(es_arginina(codon))
-        return ARGININA;
+        err = aminoacido_crear(salida, ARGININA);
     if(es_valina(codon))
-        return VALINA;
+        err = aminoacido_crear(salida, VALINA);
     if(es_alanina(codon))
-        return ALANINA;
+        err = aminoacido_crear(salida, ALANINA);
     if(es_aspartico(codon))
-        return ACIDO_ASPARTICO;
+        err = aminoacido_crear(salida, ACIDO_ASPARTICO);
     if(es_glicina(codon))
-        return GLICINA;
-    return ERROR;
+        err = aminoacido_crear(salida, GLICINA);
+
+    if(err = ERROR)
+        return ERROR;
+    return OK;
 }
 
 

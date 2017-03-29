@@ -20,11 +20,11 @@
 #define OK 0
 #define MAX_CLI_ESPERA 2
 
-static int inicializar_estructuras_cliente(struct addrinfo *hints, struct addrinfo *result, const char *host, const char *service);
+static int inicializar_estructuras_cliente(struct addrinfo *hints, struct addrinfo *result,const char *host,const char *service);
 static int conectar_socket(int socket, struct addrinfo *ptr);
-static int inicializar_estructuras_server(struct addrinfo *hints, struct addrinfo *ptr, unsigned short port);
-static int crear_socket(int *file_descriptor,struct addrinfo *ptr);
-static int bind_socket(int file_descriptor,struct addrinfo *ptr);
+static int inicializar_estructuras_server(struct addrinfo *hints, struct addrinfo *ptr, const char *port);
+static int crear_socket(int *file_descriptor, struct addrinfo *ptr);
+static int bind_socket(int file_descriptor, struct addrinfo *ptr);
 static int listen_socket(int socket);
 
 
@@ -34,6 +34,10 @@ int socket_create(socket_t *self) {
 }
 
 int socket_destroy(socket_t *self){
+    int err = 0;
+    err = close(self->socket);
+    if(err != OK)
+        return ERROR;
     return OK;
 }
 
@@ -42,15 +46,23 @@ int socket_connect(socket_t *self, const char *host, const char *service){
     bool se_conecto=false;
     struct addrinfo hints;
     struct addrinfo *result, *ptr;
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = 0;
 
-    if(inicializar_estructuras_cliente(&hints,result,host,service)==ERROR)
+    s = getaddrinfo(host, service, &hints, &result);
+
+    if (s != OK) {
+        printf("Error en getaddrinfo: %s\n", gai_strerror(s));
         return ERROR;
+    }
+
 
     for (ptr = result; ptr != NULL && se_conecto == false; ptr = ptr->ai_next) {
-        if(crear_socket(&(self->socket),ptr)==ERROR)//Puede fallar
+        if(crear_socket(&(self->socket),ptr) == ERROR)//Puede fallar
             return ERROR;
-        else if(conectar_socket(self->socket, ptr)==OK)
-            se_conecto=true;
+        else if(conectar_socket(self->socket, ptr) == OK)
+            se_conecto = true;
     }
 
     freeaddrinfo(result);
@@ -62,11 +74,22 @@ int socket_connect(socket_t *self, const char *host, const char *service){
 
 }
 
-int socket_bindandlisten(socket_t *self, unsigned short port) {
+int socket_bindandlisten(socket_t *self, const char *port) {
     struct addrinfo hints;
     struct addrinfo *ptr;
+    int s;
+    memset(&hints, 0, sizeof(struct addrinfo));//Inicializa 0 la estructura
 
-    if(inicializar_estructuras_server(&hints,ptr,port)==ERROR)
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+    s = getaddrinfo(NULL, port, &hints, &ptr);//NULL porque es en la maquina local
+
+    if (s != OK) {
+        printf("Error en getaddrinfo: %s\n", gai_strerror(s));
+        return ERROR;
+    }
+    if(inicializar_estructuras_server(&hints,ptr,port) == ERROR)
         return ERROR;
 
     if(crear_socket(&(self->socket),ptr)==ERROR)
@@ -88,24 +111,24 @@ int socket_shutdown(socket_t *self,int how) {
 }
 
 int socket_accept(socket_t *self, socket_t *new_socket) {
-    new_socket->socket=accept(self->socket,NULL,NULL);
+    new_socket->socket = accept(self->socket,NULL,NULL);
 
     if (new_socket->socket == -1) {
-        printf("Error: %s\n", strerror(errno));
+        printf("Error accept: %s\n", strerror(errno));
         return ERROR;
     }
     return OK;
 }
 
-int socket_send(socket_t *self,void *data, size_t data_len) {
+size_t socket_send(socket_t *self, void *data, size_t data_len) {
     size_t bytes_eviados=0;
     int s=-1;
 
     while (bytes_eviados < data_len) {
-        s = send(self->socket, &data[bytes_eviados], data_len - bytes_eviados, MSG_NOSIGNAL);
+        s = send(self->socket, data + bytes_eviados, data_len - bytes_eviados, MSG_NOSIGNAL);
 
         if (s < 0) {
-            printf("Error: %s\n", strerror(errno));
+            printf("Error send: %s\n", strerror(errno));
             return s;
         }
         else if (s == 0) {
@@ -118,12 +141,12 @@ int socket_send(socket_t *self,void *data, size_t data_len) {
     return bytes_eviados;
 }
 
-int socket_receive(socket_t *self, void *data, size_t data_len) {
+size_t socket_receive(socket_t *self, void *data, size_t data_len) {
     size_t bytes_recibidos=0;
     int s=0;
 
     while (bytes_recibidos < data_len) {
-        s = recv(self->socket, &data[bytes_recibidos], data_len - bytes_recibidos, MSG_NOSIGNAL);
+        s = recv(self->socket, data + bytes_recibidos, data_len - bytes_recibidos, MSG_NOSIGNAL);
 
         if (s <= 0)
             return s;
@@ -135,64 +158,45 @@ int socket_receive(socket_t *self, void *data, size_t data_len) {
 }
 
 
-static int inicializar_estructuras_cliente(struct addrinfo *hints, struct addrinfo *result, const char *host, const char *service){
+static int inicializar_estructuras_cliente(struct addrinfo *hints,struct addrinfo *result,
+                                           const char *host, const char *service){
     int s=ERROR;
+/*
 
-    memset(&hints, 0, sizeof(struct addrinfo));
-    hints->ai_family = AF_INET;
-    hints->ai_socktype = SOCK_STREAM;
-    hints->ai_flags = 0;
-
-    s=getaddrinfo(host, service, &hints, &result);
-    if (s != OK) {
-        printf("Error en getaddrinfo: %s\n", gai_strerror(s));
-        return ERROR;
-    }
-
+*/
     return OK;
 }
 
-static int conectar_socket(int socket, struct addrinfo *ptr){
+static int conectar_socket(int socket,struct addrinfo *ptr){
     int s=-1;
     s=connect(socket, ptr->ai_addr, ptr->ai_addrlen);
     if (s == -1) {
-        printf("Error: %s\n", strerror(errno));
+        printf("Error en connect: %s\n", strerror(errno));
         close(socket);
         return ERROR;
     }
     return OK;
 }
 
-static int inicializar_estructuras_server(struct addrinfo *hints, struct addrinfo *ptr, unsigned short port){
+static int inicializar_estructuras_server(struct addrinfo *hints,struct addrinfo *ptr, const char* port){
     int s=1;
 
-    memset(&hints, 0, sizeof(struct addrinfo));//Inicializa 0 la estructura
-    hints->ai_family = AF_INET;
-    hints->ai_socktype = SOCK_STREAM;
-    hints->ai_flags = AI_PASSIVE;
-    s=getaddrinfo(NULL, port, &hints, &ptr);//NULL porque es en la maquina local
-
-    if (s != OK) {
-        printf("Error en getaddrinfo: %s\n", gai_strerror(s));
-        return ERROR;
-    }
     return OK;
 }
 
 static int crear_socket(int *file_descriptor,struct addrinfo *ptr){
     int val=1,s=-1;
 
-    *file_descriptor=socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+    *file_descriptor = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 
     if (*file_descriptor == -1) {
-        printf("Error: %s\n", strerror(errno));
+        printf("Error en crear: %s\n", strerror(errno));
         freeaddrinfo(ptr);
         return ERROR;
     }
-
-    s = setsockopt(*file_descriptor, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-    if (s == -1) {
-        printf("Error: %s\n", strerror(errno));
+    int enable = 1;
+    if (setsockopt(*file_descriptor, SOL_SOCKET, SO_REUSEPORT, &enable, sizeof(int)) < 0) {
+        printf("Error en setscokopt: %s\n", strerror(errno));
         close(*file_descriptor);
         freeaddrinfo(ptr);
         return ERROR;
@@ -206,7 +210,7 @@ static int bind_socket(int file_descriptor,struct addrinfo *ptr){
 
     s = bind(file_descriptor, ptr->ai_addr, ptr->ai_addrlen);
     if (s == -1) {
-        printf("Error: %s\n", strerror(errno));
+        printf("Error bind: %s\n", strerror(errno));
         close(file_descriptor);
         freeaddrinfo(ptr);
         return ERROR;
@@ -216,8 +220,10 @@ static int bind_socket(int file_descriptor,struct addrinfo *ptr){
 }
 
 static int listen_socket(int socket){
-    if (listen(socket, MAX_CLI_ESPERA) == -1) {
-        printf("Error: %s\n", strerror(errno));
+    int s = -1;
+    s = listen(socket, MAX_CLI_ESPERA);
+    if (s == -1) {
+        printf("Error listen: %s\n", strerror(errno));
         close(socket);
         return ERROR;
     }

@@ -8,9 +8,10 @@
 #include "stdio.h"
 #include "stdbool.h"
 #include "string.h"
-#include "codon.h"
 #include "codigo_genetico.h"
 #include "socket.h"
+
+
 #define MAX_LEN_RESPUESTA 255
 typedef struct{
     aminoacido_t aminoacido;
@@ -26,10 +27,10 @@ typedef struct{
     socket_t socket_aceptador;
 }servidor_t;
 
-int servidor_crear(servidor_t *self,unsigned short port);
+int servidor_crear(servidor_t *self,const char *port);
 int servidor_destruir(servidor_t *self);
 int servidor_recibir_datos(servidor_t *self);
 int servidor_procesar(servidor_t *self);
-int servidor_enviar_datos(servidor_t *self);
+int servidor_enviar_mensaje(servidor_t *self);
 
 #endif //TP1_SERVIDOR_H
