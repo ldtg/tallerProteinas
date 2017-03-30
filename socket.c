@@ -14,9 +14,6 @@
 #include <netdb.h>
 #include <unistd.h>
 
-#define ERROR 1
-#define OK 0
-#define MAX_CLI_ESPERA 2
 
 static int generar_result_cliente(struct addrinfo **result, const char *host, const char *service);
 static int generar_result_server(struct addrinfo **ptr, const char *port);

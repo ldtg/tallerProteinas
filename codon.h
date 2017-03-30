@@ -8,7 +8,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
-
+#define ERROR 1
+#define OK 0
 typedef struct{
     unsigned char byte;
     char letras[3];

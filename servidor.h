@@ -11,8 +11,11 @@
 #include "codigo_genetico.h"
 #include "socket.h"
 
-
+#define BUFF_RECV_LEN 20
 #define MAX_LEN_RESPUESTA 255
+#define OK 0
+#define ERROR 1
+
 typedef struct{
     aminoacido_t aminoacido;
     size_t cantidad_contados;

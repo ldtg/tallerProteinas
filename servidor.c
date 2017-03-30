@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include "servidor.h"
-#define OK 0
-#define ERROR 1
 
 static void inicializar_estado(servidor_t *self);
 static int comparar_contador(const void * a, const void * b);
 static int contar_aminoacidos_distintos(contador_aminoacidos_t *contador_aminoacidos);
 static int generar_respuesta(servidor_t *self, int cant_dist);
+static int procesar_recibidos(servidor_t *self,char *codon_byte, int bytes_rcv);
+static int codon_byte_len(char *codon_byte);
 
 int servidor_crear(servidor_t *self, const char *port) {
     int error_crear_aceptador = ERROR;
@@ -44,34 +44,27 @@ int servidor_destruir(servidor_t *self) {
 }
 
 int servidor_recibir_datos(servidor_t *self) {
-    codon_t codon_aux;
-    unsigned char codon_byte = 0;
-    aminoacido_t aminoacido_aux;
-    int socket_rcv_status = -1;
-    int err_cod_gen = ERROR;
+    char codon_byte[BUFF_RECV_LEN];
+    int bytes_rcv = 0;
+    int rcv_status = 0;
 
     if(socket_accept(&(self->socket_aceptador), &(self->socket_recibidor)) == ERROR)
         return ERROR;
 
-    socket_rcv_status = socket_receive(&(self->socket_recibidor),
-                                       &codon_byte, sizeof(codon_byte));
-
-    while(socket_rcv_status > 0){//TODO: excep
-        codon_crear_con_byte(&codon_aux,codon_byte);
-
-        if(!codon_es_alto(&codon_aux)){
-            err_cod_gen = codigo_genetico_procesar(&codon_aux, &aminoacido_aux);
-            if(err_cod_gen == OK)
-                self->contador_aminoacidos[aminoacido_to_int(&aminoacido_aux)].cantidad_contados += 1;
-        }
+    do{//TODO: excep
+        memset(codon_byte, -1, BUFF_RECV_LEN);
+        rcv_status = socket_receive(&(self->socket_recibidor),
+                                           &codon_byte, sizeof(codon_byte));
+        if(rcv_status != codon_byte_len(codon_byte))
+            bytes_rcv = codon_byte_len(codon_byte);
         else
-            self->cantidad_proteinas+=1;
-        socket_rcv_status = socket_receive(&(self->socket_recibidor),
-                                           &codon_byte,sizeof(codon_byte));
-        codon_destruir(&codon_aux);
-    }
+            bytes_rcv = rcv_status;
 
-    if(socket_rcv_status < 0)
+        procesar_recibidos(self, codon_byte, bytes_rcv);
+
+    }while(rcv_status > 0);
+
+    if(rcv_status < 0)
         return ERROR;
 
     return OK;
@@ -80,13 +73,16 @@ int servidor_recibir_datos(servidor_t *self) {
 int servidor_procesar(servidor_t *self) {
     int cant_aminoacidos_distintos = 0;
     int error_generar_respuesta = ERROR;
+
     cant_aminoacidos_distintos = contar_aminoacidos_distintos(self->contador_aminoacidos);
-    qsort((void*)&(self->contador_aminoacidos), CANT_AMINOACIDOS, sizeof(contador_aminoacidos_t), comparar_contador);
+    qsort((void*)&(self->contador_aminoacidos), CANT_AMINOACIDOS,
+          sizeof(contador_aminoacidos_t), comparar_contador);
 
     error_generar_respuesta = generar_respuesta(self, cant_aminoacidos_distintos);
 
     if(error_generar_respuesta == ERROR)
         return ERROR;
+
     return OK;
 }
 
@@ -98,8 +94,10 @@ int servidor_enviar_mensaje(servidor_t *self) {
             ,(void *)&(self->respuesta), len_respuesta);
 
     socket_shutdown(&self->socket_recibidor, SHUT_WR); //PROTOCOLO
+
     if(enviados < 0 || enviados < len_respuesta)
         return ERROR;
+
     return OK;
 }
 
@@ -113,13 +111,42 @@ static void inicializar_estado(servidor_t *self){
     self->cantidad_proteinas = 0;
 }
 
+static int procesar_recibidos(servidor_t *self,char *codon_byte, int bytes_rcv){
+    codon_t codon_aux;
+    int err_cod_gen = ERROR;
+    aminoacido_t aminoacido_aux;
+
+    for(int i=0; i < bytes_rcv; i++){
+        codon_crear_con_byte(&codon_aux,codon_byte[i]);
+
+        if(!codon_es_alto(&codon_aux)){
+            err_cod_gen = codigo_genetico_procesar(&codon_aux, &aminoacido_aux);
+            if(err_cod_gen == OK)
+                self->contador_aminoacidos[aminoacido_to_int(&aminoacido_aux)].cantidad_contados += 1;
+        }
+        else
+            self->cantidad_proteinas+=1;
+
+        codon_destruir(&codon_aux);
+    }
+
+    return OK;
+}
+
+static int codon_byte_len(char *codon_byte){
+    int cont = 0;
+    for(int i=0; i< BUFF_RECV_LEN; i++){
+        if(codon_byte[i] != -1)
+            cont++;
+    }
+    return cont;
+}
+
 static int comparar_contador (const void * a, const void * b){
     contador_aminoacidos_t *aux_a,*aux_b;
 
     aux_a = (contador_aminoacidos_t*)a;
     aux_b = (contador_aminoacidos_t*)b;
-    /*aminoacido_to_string(&aux_a->aminoacido,str_a);
-    aminoacido_to_string(&aux_b->aminoacido,str_b);*/
 
     if(aux_a->cantidad_contados > aux_b->cantidad_contados)
         return -1;
@@ -137,6 +164,7 @@ static int contar_aminoacidos_distintos(contador_aminoacidos_t *contador_aminoac
         if(contador_aminoacidos[i].cantidad_contados > 0)
             contador++;
     }
+
     return contador;
 }
 
@@ -191,5 +219,6 @@ static int generar_respuesta(servidor_t *self, int cant_dist){
                  contados_tercero);
         return OK;
     }
+
     return ERROR;
 }

@@ -3,7 +3,7 @@
 //
 
 #include "codigo_genetico.h"
-#define ERROR -1
+#define ERROR 1
 #define OK 0
 
 static bool es_fenilanina(codon_t *codon);

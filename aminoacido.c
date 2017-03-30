@@ -4,8 +4,6 @@
 
 #include <memory.h>
 #include "aminoacido.h"
-#define OK 0
-#define ERROR 1
 
 static char *AMINOACIDO_STRING_PRINT[] = {
         "Fenilanina", "Leucina", "Serina", "Tirosina", "Cisteína", "Triptófano", "Prolina",

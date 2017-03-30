@@ -7,8 +7,11 @@
 
 #include <stdio.h>
 #include "socket.h"
-#define BUFF_LEN 60
+#define BUFF_SEND_LEN 20 //read/3
+#define BUFF_READ_LEN 60
 #define MAX_LEN_RESPUESTA 255
+#define OK 0
+#define ERROR 1
 
 typedef struct{
     FILE *in_file;

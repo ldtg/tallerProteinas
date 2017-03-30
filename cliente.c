@@ -7,9 +7,6 @@
 #include "codon.h"
 #include <string.h>
 
-#define OK 0
-#define ERROR 1
-
 static int leer_archivo(const cliente_t *self, char *buff, bool *eof);
 
 static int obtener_bytes_a_enviar(int bytes_read, const char *buff, unsigned char *bytes_to_send);
@@ -38,7 +35,7 @@ int cliente_crear(cliente_t *self, FILE *file, char *host, char *service) {
 }
 
 int cliente_destruir(cliente_t *self) {
-    int err_s, err_d;
+    int err_d;
 
     err_d = socket_destroy(&self->socket);
 
@@ -53,8 +50,8 @@ int cliente_enviar_datos(cliente_t *self) {
     int bytes_read = 0;
     int total_bytes_read = 0;
 
-    unsigned char bytes_to_send[BUFF_LEN/3];
-    char buff[BUFF_LEN];
+    unsigned char bytes_to_send[BUFF_SEND_LEN];
+    char buff[BUFF_READ_LEN];
     bool eof = false;
 
     do{
@@ -92,10 +89,10 @@ void cliente_imprimir_mensaje(cliente_t *self) {
 
 
 static int obtener_bytes_a_enviar(int bytes_read, const char *buff, unsigned char *bytes_to_send) {
-    codon_t codon[BUFF_LEN/3];
+    codon_t codon[BUFF_SEND_LEN];
     char codon_str[3];
 
-    memset(bytes_to_send,0,BUFF_LEN/3);
+    memset(bytes_to_send,0,BUFF_SEND_LEN);
 
     for(int i = 0; i < bytes_read / 3; i++){
         strncpy(codon_str, buff + 3*i, 3);
@@ -108,11 +105,11 @@ static int obtener_bytes_a_enviar(int bytes_read, const char *buff, unsigned cha
 static int leer_archivo(const cliente_t *self, char *buff, bool *eof) {
     int f_read = 0;
     int b_read = 0;
-    memset(buff,0,BUFF_LEN);
+    memset(buff,0, BUFF_READ_LEN);
 
-    f_read = fread(buff, 1, BUFF_LEN, self->in_file); /////////ERROR
+    f_read = fread(buff, 1, BUFF_READ_LEN, self->in_file); /////////ERROR
 
-    if(f_read < BUFF_LEN && strlen(buff) > 0) {
+    if(f_read < BUFF_READ_LEN && strlen(buff) > 0) {
         if(buff[f_read - 1] == '\n')
             b_read = strlen(buff) -1;
         else

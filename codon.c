@@ -10,8 +10,6 @@
 #define ALTO_2 "UAG"
 #define ALTO_3 "UGA"
 #define INICIO "AUG"
-#define ERROR 1
-#define OK 0
 
 static int a_letras(unsigned char byte, char *letras);
 static unsigned char a_byte(char* letras);

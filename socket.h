@@ -5,6 +5,10 @@
 #ifndef TP1_SOCKET_H
 #define TP1_SOCKET_H
 #include <stdio.h>
+
+#define ERROR 1
+#define OK 0
+#define MAX_CLI_ESPERA 2
 typedef struct{
     int socket;
 }socket_t;
