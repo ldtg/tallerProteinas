@@ -11,7 +11,7 @@
 static void inicializar_estado(servidor_t *self);
 static int comparar_contador(const void * a, const void * b);
 static int contar_aminoacidos_distintos(contador_aminoacidos_t *contador_aminoacidos);
-static int generar_respuesta(servidor_t *self);
+static int generar_respuesta(servidor_t *self, int cant_dist);
 
 int servidor_crear(servidor_t *self, const char *port) {
     int error_crear_aceptador = ERROR;
@@ -68,6 +68,7 @@ int servidor_recibir_datos(servidor_t *self) {
             self->cantidad_proteinas+=1;
         socket_rcv_status = socket_receive(&(self->socket_recibidor),
                                            &codon_byte,sizeof(codon_byte));
+        codon_destruir(&codon_aux);
     }
 
     if(socket_rcv_status < 0)
@@ -79,10 +80,10 @@ int servidor_recibir_datos(servidor_t *self) {
 int servidor_procesar(servidor_t *self) {
     int cant_aminoacidos_distintos = 0;
     int error_generar_respuesta = ERROR;
-    ////////////PROBLEMA
-    qsort((void*)&(self->contador_aminoacidos[0]),CANT_AMINOACIDOS,sizeof(contador_aminoacidos_t),comparar_contador);
     cant_aminoacidos_distintos = contar_aminoacidos_distintos(self->contador_aminoacidos);
-    error_generar_respuesta = generar_respuesta(self);
+    qsort((void*)&(self->contador_aminoacidos), CANT_AMINOACIDOS, sizeof(contador_aminoacidos_t), comparar_contador);
+
+    error_generar_respuesta = generar_respuesta(self, cant_aminoacidos_distintos);
 
     if(error_generar_respuesta == ERROR)
         return ERROR;
@@ -91,12 +92,12 @@ int servidor_procesar(servidor_t *self) {
 
 int servidor_enviar_mensaje(servidor_t *self) {
     int enviados=0;
-    size_t len_respuesta =  strnlen(self->respuesta, MAX_LEN_RESPUESTA);
+    size_t len_respuesta =  strlen(self->respuesta);
 
     enviados = socket_send(&(self->socket_recibidor)
             ,(void *)&(self->respuesta), len_respuesta);
 
-    socket_shutdown(&self->socket_recibidor,SHUT_WR); //PROTOCOLO
+    socket_shutdown(&self->socket_recibidor, SHUT_WR); //PROTOCOLO
     if(enviados < 0 || enviados < len_respuesta)
         return ERROR;
     return OK;
@@ -109,27 +110,24 @@ static void inicializar_estado(servidor_t *self){
     }
 
     strncpy(self->respuesta,"",MAX_LEN_RESPUESTA);
-    self->cantidad_aminoacidos_distintos = 0;
     self->cantidad_proteinas = 0;
 }
 
 static int comparar_contador (const void * a, const void * b){
     contador_aminoacidos_t *aux_a,*aux_b;
-    char str_a[MAX_LEN_AMINOACIDO]="";
-    char str_b[MAX_LEN_AMINOACIDO]="";
 
     aux_a = (contador_aminoacidos_t*)a;
     aux_b = (contador_aminoacidos_t*)b;
-    aminoacido_to_string(&aux_a->aminoacido,str_a);
-    aminoacido_to_string(&aux_b->aminoacido,str_b);
+    /*aminoacido_to_string(&aux_a->aminoacido,str_a);
+    aminoacido_to_string(&aux_b->aminoacido,str_b);*/
 
     if(aux_a->cantidad_contados > aux_b->cantidad_contados)
         return -1;
     else if(aux_a->cantidad_contados < aux_b->cantidad_contados)
         return 1;
 
-    //son iguales comparo nombres
-    return strncmp(str_a,str_b,MAX_LEN_AMINOACIDO);
+    //son iguales comparo aminoacidos
+    return aminoacido_comparar(&aux_a->aminoacido, &aux_b->aminoacido);
 }
 
 static int contar_aminoacidos_distintos(contador_aminoacidos_t *contador_aminoacidos){
@@ -138,12 +136,11 @@ static int contar_aminoacidos_distintos(contador_aminoacidos_t *contador_aminoac
     for(int i=0;i<CANT_AMINOACIDOS;i++){
         if(contador_aminoacidos[i].cantidad_contados > 0)
             contador++;
-        else
-            break;
     }
+    return contador;
 }
 
-static int generar_respuesta(servidor_t *self){
+static int generar_respuesta(servidor_t *self, int cant_dist){
     aminoacido_t primer_aminoacido, segundo_aminoacido, tercer_aminoacido;
     char str_primer_aminoacido[MAX_LEN_AMINOACIDO] = "";
     char str_segundo_aminoacido[MAX_LEN_AMINOACIDO] = "";
@@ -161,18 +158,18 @@ static int generar_respuesta(servidor_t *self){
     contados_tercero = self->contador_aminoacidos[2].cantidad_contados;
 
 
-    if(self->cantidad_aminoacidos_distintos < 3){
-        if(self->cantidad_aminoacidos_distintos == 0)
+    if(cant_dist < 3){
+        if(cant_dist == 0)
             return ERROR;
-        else if (self->cantidad_aminoacidos_distintos == 1){
+        else if (cant_dist == 1){
             snprintf(self->respuesta,MAX_LEN_RESPUESTA,
-                     "Cantidad de proteínas encontradas: %zd\n"
+                     "Cantidad de proteínas encontradas: %zd\n\n"
                      "Aminoácidos más frecuentes:\n"
                      "1) %s: %zd\n",self->cantidad_proteinas,
                      str_primer_aminoacido, contados_primer);
             return OK;
         } else{
-            snprintf(self->respuesta,MAX_LEN_RESPUESTA,"Cantidad de proteínas encontradas: %zd\n"
+            snprintf(self->respuesta,MAX_LEN_RESPUESTA,"Cantidad de proteínas encontradas: %zd\n\n"
                     "Aminoácidos más frecuentes:\n"
                     "1) %s: %zd\n"
                     "2) %s: %zd\n",self->cantidad_proteinas,
@@ -181,7 +178,7 @@ static int generar_respuesta(servidor_t *self){
             return OK;
         }
     } else {
-        snprintf(self->respuesta,MAX_LEN_RESPUESTA,"Cantidad de proteínas encontradas: %zd\n"
+        snprintf(self->respuesta,MAX_LEN_RESPUESTA,"Cantidad de proteínas encontradas: %zd\n\n"
                 "Aminoácidos más frecuentes:\n"
                 "1) %s: %zd\n"
                 "2) %s: %zd\n"

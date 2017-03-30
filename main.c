@@ -12,13 +12,15 @@ int main(int argc, char* argv[]) {
         servidor_recibir_datos(&server);
         servidor_procesar(&server);
         servidor_enviar_mensaje(&server);
+        servidor_destruir(&server);
     }
     if(strcmp(argv[1],"cliente") == 0){
-        file = fopen("arn.txt","r");
+        file = fopen(argv[2],"r");
         cliente_crear(&cliente, file, "127.0.0.1", "7070");
         cliente_enviar_datos(&cliente);
         cliente_recibir_datos(&cliente);
         cliente_imprimir_mensaje(&cliente);
+        cliente_destruir(&cliente);
         fclose(file);
     }
 

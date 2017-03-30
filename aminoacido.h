@@ -5,6 +5,8 @@
 #ifndef TP1_AMINOACIDO_H
 #define TP1_AMINOACIDO_H
 #define MAX_LEN_AMINOACIDO 20
+#define CANT_AMINOACIDOS 19
+
 typedef enum AMINOACIDO {FENILALANINA, LEUCINA, SERINA, TIROSINA, CISTEINA, TRIPTOFONO, PROLINA, HISTIDINA,
     ACIDO_GLUTAMICO, ISOLEUCINA, METIONINA, TREONINA, ASPARAGINA, LISINA, ARGININA, VALINA,
     ALANINA, ACIDO_ASPARTICO, GLICINA}aminoacido_e;
@@ -17,5 +19,5 @@ typedef struct{
 int aminoacido_crear(aminoacido_t *self, aminoacido_e aminoacido);
 int aminoacido_to_string(aminoacido_t *self, char *dest);
 int aminoacido_to_int(aminoacido_t *self);
-
+int aminoacido_comparar(aminoacido_t *self, aminoacido_t *otro);
 #endif //TP1_AMINOACIDO_H

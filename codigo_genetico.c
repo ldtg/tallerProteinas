@@ -39,44 +39,44 @@ int codigo_genetico_procesar(codon_t *codon, aminoacido_t *salida){
     int err = ERROR;
     if(es_fenilanina(codon))
         err = aminoacido_crear(salida, FENILALANINA);
-    if(es_leucina(codon))
+    else if(es_leucina(codon))
         err = aminoacido_crear(salida, LEUCINA);
-    if(es_serina(codon))
+    else if(es_serina(codon))
         err = aminoacido_crear(salida, SERINA);
-    if(es_tirosina(codon))
+    else if(es_tirosina(codon))
         err = aminoacido_crear(salida, TIROSINA);
-    if(es_cisteina(codon))
+    else if(es_cisteina(codon))
         err = aminoacido_crear(salida, CISTEINA);
-    if(es_triptofano(codon))
+    else if(es_triptofano(codon))
         err = aminoacido_crear(salida, TRIPTOFONO);
-    if(es_prolina(codon))
+    else if(es_prolina(codon))
         err = aminoacido_crear(salida, PROLINA);
-    if(es_histidina(codon))
+    else if(es_histidina(codon))
         err = aminoacido_crear(salida, HISTIDINA);
-    if(es_glutamico(codon))
+    else if(es_glutamico(codon))
         err = aminoacido_crear(salida, ACIDO_GLUTAMICO);
-    if(es_isoleucina(codon))
+    else if(es_isoleucina(codon))
         err = aminoacido_crear(salida, ISOLEUCINA);
-    if(es_metionina(codon))
+    else if(es_metionina(codon))
         err = aminoacido_crear(salida, METIONINA);
-    if(es_treonina(codon))
+    else if(es_treonina(codon))
         err = aminoacido_crear(salida, TREONINA);
-    if(es_asparagina(codon))
+    else if(es_asparagina(codon))
         err = aminoacido_crear(salida, ASPARAGINA);
-    if(es_lisina(codon))
+    else if(es_lisina(codon))
         err = aminoacido_crear(salida, LISINA);
-    if(es_arginina(codon))
+    else if(es_arginina(codon))
         err = aminoacido_crear(salida, ARGININA);
-    if(es_valina(codon))
+    else if(es_valina(codon))
         err = aminoacido_crear(salida, VALINA);
-    if(es_alanina(codon))
+    else if(es_alanina(codon))
         err = aminoacido_crear(salida, ALANINA);
-    if(es_aspartico(codon))
+    else if(es_aspartico(codon))
         err = aminoacido_crear(salida, ACIDO_ASPARTICO);
-    if(es_glicina(codon))
+    else if(es_glicina(codon))
         err = aminoacido_crear(salida, GLICINA);
 
-    if(err = ERROR)
+    if(err == ERROR)
         return ERROR;
     return OK;
 }
@@ -112,8 +112,7 @@ bool es_triptofano(codon_t *codon) {
 
 bool es_prolina(codon_t *codon) {
     return codon_es_igual(codon,"CCU")||codon_es_igual(codon,"CCC")
-          ||codon_es_igual(codon,"CCA")||codon_es_igual(codon,"CCG")
-          ||codon_es_igual(codon,"AGU")||codon_es_igual(codon,"AGC");
+          ||codon_es_igual(codon,"CCA")||codon_es_igual(codon,"CCG");
 }
 
 bool es_histidina(codon_t *codon) {

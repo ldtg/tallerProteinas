@@ -29,9 +29,9 @@ int codon_crear_con_byte(codon_t *self, unsigned char byte){//TODO: Excepciones
 
 int codon_crear_con_letras(codon_t *self,char* letras){ //TODO: Excepciones
     strncpy(self->letras,letras,3);
-    self->byte=a_byte(self->letras);
-    self->esAlto=es_alto(self->letras);
-    self->esInicio=es_inicio(self->letras);
+    self->byte = a_byte(self->letras);
+    self->esAlto = es_alto(self->letras);
+    self->esInicio = es_inicio(self->letras);
     return OK;
 }
 
@@ -43,17 +43,8 @@ unsigned char codon_get_byte(codon_t *self){
     return self->byte;
 }
 
-int codon_get_letras(codon_t *self, char* letras){
-    strncpy(letras,self->letras,3); //TODO: excepciones
-    return 0;
-}
-
 bool codon_es_alto(codon_t *self){
     return self->esAlto;
-}
-
-bool codon_es_inicio(codon_t *self){
-    return self->esInicio;
 }
 
 bool codon_es_igual(codon_t *self,char* letras){

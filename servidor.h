@@ -21,7 +21,6 @@ typedef struct{
 typedef struct{
     contador_aminoacidos_t contador_aminoacidos[CANT_AMINOACIDOS];
     size_t cantidad_proteinas;
-    int cantidad_aminoacidos_distintos;
     char respuesta[MAX_LEN_RESPUESTA];
     socket_t socket_recibidor;
     socket_t socket_aceptador;

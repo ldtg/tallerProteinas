@@ -28,15 +28,11 @@ int codon_destruir(codon_t *self);
 //
 //
 unsigned char codon_get_byte(codon_t *self);
-//
-//
-int codon_get_letras(codon_t *self,char *letras);
+
 //
 //
 bool codon_es_alto(codon_t *self);
-//
-//
-bool codon_es_inicio(codon_t *self);
+
 //
 //
 bool codon_es_igual(codon_t *self,char* letras);
