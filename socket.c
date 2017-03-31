@@ -14,18 +14,30 @@
 #include <netdb.h>
 #include <unistd.h>
 
+// Retorna en result un puntero a una struct addrinfo valida resultado de
+// getaddrinf para modo cliente con host y service
 static int generar_result_cliente(struct addrinfo **result,
                                   const char *host,
                                   const char *service);
 
-static int generar_result_server(struct addrinfo **ptr, const char *port);
+// Crea un socket en modo reusable con la informacion de result y retorna su
+// fd por  file_descriptor
+static int crear_socket(int *file_descriptor, struct addrinfo *result);
 
-static int conectar_socket(int socket, struct addrinfo *ptr);
+// Conecta el socket dado por el fd en socket, utilizando la informacion de
+// result
+static int conectar_socket(int socket, struct addrinfo *result);
 
-static int crear_socket(int *file_descriptor, struct addrinfo *ptr);
+// Retorna en ptr un puntero a una struct addrinfo valida resultado de
+// getaddrinf para modo servidor en port
+static int generar_result_server(struct addrinfo **result, const char *port);
 
-static int bind_socket(int file_descriptor, struct addrinfo *ptr);
 
+// Binde el socket dado por file_descriptor utilizando la informacion dada en
+// result
+static int bind_socket(int file_descriptor, struct addrinfo *result);
+
+// Pone en modo listen el socket dado por el fd socket
 static int listen_socket(int socket);
 
 int socket_create(socket_t *self) {
@@ -67,18 +79,18 @@ int socket_connect(socket_t *self, const char *host, const char *service) {
 }
 
 int socket_bindandlisten(socket_t *self, const char *port) {
-  struct addrinfo *ptr;
+  struct addrinfo *result;
 
-  if (generar_result_server(&ptr, port) == ERROR)
+  if (generar_result_server(&result, port) == ERROR)
     return ERROR;
 
-  if (crear_socket(&(self->socket), ptr) == ERROR)
+  if (crear_socket(&(self->socket), result) == ERROR)
     return ERROR;
 
-  if (bind_socket(self->socket, ptr) == ERROR)
+  if (bind_socket(self->socket, result) == ERROR)
     return ERROR;
 
-  freeaddrinfo(ptr);
+  freeaddrinfo(result);
 
   if (listen_socket(self->socket) == ERROR)
     return ERROR;
@@ -87,7 +99,9 @@ int socket_bindandlisten(socket_t *self, const char *port) {
 }
 
 int socket_shutdown(socket_t *self, int how) {
-  return shutdown(self->socket, how);
+  if (shutdown(self->socket, how) == -1)
+    return ERROR;
+  return OK;
 }
 
 int socket_accept(socket_t *self, socket_t *new_socket) {
@@ -160,17 +174,6 @@ static int generar_result_cliente(struct addrinfo **result,
   return OK;
 }
 
-static int conectar_socket(int socket, struct addrinfo *ptr) {
-  int s = -1;
-  s = connect(socket, ptr->ai_addr, ptr->ai_addrlen);
-  if (s == -1) {
-    printf("Error en connect: %s\n", strerror(errno));
-    close(socket);
-    return ERROR;
-  }
-  return OK;
-}
-
 static int crear_socket(int *file_descriptor, struct addrinfo *ptr) {
   int enable = 1;
 
@@ -196,7 +199,18 @@ static int crear_socket(int *file_descriptor, struct addrinfo *ptr) {
   return OK;
 }
 
-static int generar_result_server(struct addrinfo **ptr, const char *port) {
+static int conectar_socket(int socket, struct addrinfo *ptr) {
+  int s = -1;
+  s = connect(socket, ptr->ai_addr, ptr->ai_addrlen);
+  if (s == -1) {
+    printf("Error en connect: %s\n", strerror(errno));
+    close(socket);
+    return ERROR;
+  }
+  return OK;
+}
+
+static int generar_result_server(struct addrinfo **result, const char *port) {
   struct addrinfo hints;
   int s;
   memset(&hints, 0, sizeof(struct addrinfo));//Inicializa 0 la estructura
@@ -204,7 +218,10 @@ static int generar_result_server(struct addrinfo **ptr, const char *port) {
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
-  s = getaddrinfo(NULL, port, &hints, ptr);//NULL porque es en la maquina local
+  s = getaddrinfo(NULL,
+                  port,
+                  &hints,
+                  result);//NULL porque es en la maquina local
 
   if (s != OK) {
     printf("Error en getaddrinfo: %s\n", gai_strerror(s));

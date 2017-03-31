@@ -41,7 +41,7 @@ int codon_crear_con_letras(codon_t *self, char *letras) {
   self->esAlto = es_alto(self->letras);
   self->esInicio = es_inicio(self->letras);
 
-  if (self->byte > 0)
+  if (self->byte < 0)
     return ERROR;
   return OK;
 }

@@ -15,8 +15,6 @@ aminoacido.h
 /home/tg/FIUBA/taller/tp1/tp1/aminoacido.h
 
 /home/tg/FIUBA/taller/tp1/tp1/cliente.c
-sys/socket.h
--
 cliente.h
 /home/tg/FIUBA/taller/tp1/tp1/cliente.h
 codon.h
@@ -61,20 +59,16 @@ cliente.h
 /home/tg/FIUBA/taller/tp1/tp1/cliente.h
 
 /home/tg/FIUBA/taller/tp1/tp1/servidor.c
-stdlib.h
--
-sys/socket.h
--
 servidor.h
 /home/tg/FIUBA/taller/tp1/tp1/servidor.h
 
 /home/tg/FIUBA/taller/tp1/tp1/servidor.h
-stdio.h
-/home/tg/FIUBA/taller/tp1/tp1/stdio.h
-stdbool.h
-/home/tg/FIUBA/taller/tp1/tp1/stdbool.h
+stdlib.h
+-
 string.h
-/home/tg/FIUBA/taller/tp1/tp1/string.h
+-
+stdbool.h
+-
 codigo_genetico.h
 /home/tg/FIUBA/taller/tp1/tp1/codigo_genetico.h
 socket.h

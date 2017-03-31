@@ -1,7 +1,3 @@
-//
-// Created by tg on 28/03/17.
-//
-
 #include <memory.h>
 #include "aminoacido.h"
 

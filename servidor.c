@@ -2,25 +2,33 @@
 // Created by tg on 24/03/17.
 //
 
-#include <stdlib.h>
-#include <sys/socket.h>
 #include "servidor.h"
 
+//Inicializa las variables contador, cantidad de proteinas y respuesta de self
+// en 0
 static void inicializar_estado(servidor_t *self);
 
-static int comparar_contador(const void *a, const void *b);
+// Retorna la cantidad de bytes recibidos a partir del rcv_status del socket
+// y los datos recibidos
+static int obtener_cant_bytes_rcv(int rcv_status, char *codon_byte);
 
-static int contar_aminoacidos_distintos(
-    contador_aminoacidos_t *contador_aminoacidos);
+// Retorna la cantidad de bytes validos que se encuentran en
+// codon_bytes
+static int byte_len(char *codon_byte);
 
-static int generar_respuesta(servidor_t *self, int cant_dist);
-
+// Procesa los bytes recibidos actualizando el contador de self
 static int procesar_recibidos(servidor_t *self,
                               char *codon_byte, int bytes_rcv);
 
-static int byte_len(char *codon_byte);
+// Cuenta los aminoacidos distintos recibidos
+static int contar_aminoacidos_distintos(
+    contador_aminoacidos_t *contador_aminoacidos);
 
-static int obtener_cant_bytes_rcv(int rcv_status, char *codon_byte);
+// Compara dos contadores y retorna -1, 0, 1 si a es menor, igual o mayor a b
+static int comparar_contador(const void *a, const void *b);
+
+// Genera la respuesta una vez que el contador a sido ordenado
+static int generar_respuesta(servidor_t *self, int cant_dist);
 
 int servidor_crear(servidor_t *self, const char *port) {
   int error_crear_aceptador = ERROR;
@@ -109,7 +117,7 @@ int servidor_enviar_mensaje(servidor_t *self) {
                          (void *) &(self->respuesta),
                          len_respuesta);
 
-  socket_shutdown(&self->socket_recibidor, SHUT_WR); //PROTOCOLO
+  socket_shutdown(&self->socket_recibidor, SHUTWR); //PROTOCOLO
 
   if (enviados < 0 || enviados < len_respuesta)
     return ERROR;
@@ -139,6 +147,15 @@ static int obtener_cant_bytes_rcv(int rcv_status, char *codon_byte) {
   return bytes_rcv;
 }
 
+static int byte_len(char *codon_byte) {
+  int cont = 0;
+  for (int i = 0; i < BUFF_RECV_LEN; i++) {
+    if (codon_byte[i] != -1)
+      cont++;
+  }
+  return cont;
+}
+
 static int procesar_recibidos(servidor_t *self,
                               char *codon_byte,
                               int bytes_rcv) {
@@ -166,13 +183,16 @@ static int procesar_recibidos(servidor_t *self,
   return OK;
 }
 
-static int byte_len(char *codon_byte) {
-  int cont = 0;
-  for (int i = 0; i < BUFF_RECV_LEN; i++) {
-    if (codon_byte[i] != -1)
-      cont++;
+static int contar_aminoacidos_distintos(
+    contador_aminoacidos_t *contador_aminoacidos) {
+  int contador = 0;
+
+  for (int i = 0; i < CANT_AMINOACIDOS; i++) {
+    if (contador_aminoacidos[i].cantidad_contados > 0)
+      contador++;
   }
-  return cont;
+
+  return contador;
 }
 
 static int comparar_contador(const void *a, const void *b) {
@@ -187,18 +207,6 @@ static int comparar_contador(const void *a, const void *b) {
     return 1;
 
   return aminoacido_comparar(&aux_a->aminoacido, &aux_b->aminoacido);
-}
-
-static int contar_aminoacidos_distintos(
-    contador_aminoacidos_t *contador_aminoacidos) {
-  int contador = 0;
-
-  for (int i = 0; i < CANT_AMINOACIDOS; i++) {
-    if (contador_aminoacidos[i].cantidad_contados > 0)
-      contador++;
-  }
-
-  return contador;
 }
 
 static int generar_respuesta(servidor_t *self, int cant_dist) {

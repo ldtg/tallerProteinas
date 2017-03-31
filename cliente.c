@@ -1,14 +1,12 @@
-//
-// Created by tg on 24/03/17.
-//
-
-#include <sys/socket.h>
 #include "cliente.h"
 #include "codon.h"
 #include <string.h>
 
+// Lee el archivo, guarda en buff la cantidad leida y setea eof si EOF
 static size_t leer_archivo(const cliente_t *self, char *buff, bool *eof);
 
+// Retorna en bytes_to_send los bytes a enviar al servidor a partir del buffer
+// leido con leer_archivo y la cantidad de bytes leidos
 static int obtener_bytes_a_enviar(size_t bytes_read,
                                   const char *buff,
                                   char *bytes_to_send);
@@ -67,7 +65,7 @@ int cliente_enviar_datos(cliente_t *self) {
       || err == ERROR)
     return ERROR;
 
-  socket_shutdown(&(self->socket), SHUT_WR); //PROTOCOLO
+  socket_shutdown(&(self->socket), SHUTWR); //PROTOCOLO
 
   return OK;
 }
@@ -90,23 +88,6 @@ void cliente_imprimir_mensaje(cliente_t *self) {
   fputs(self->respuesta, stdout);
 }
 
-static int obtener_bytes_a_enviar(size_t bytes_read,
-                                  const char *buff,
-                                  char *bytes_to_send) {
-  codon_t codon[BUFF_SEND_LEN];
-  char codon_str[3];
-
-  memset(bytes_to_send, 0, BUFF_SEND_LEN);
-
-  for (int i = 0; i < bytes_read / 3; i++) {
-    strncpy(codon_str, buff + 3 * i, 3);
-    if (codon_crear_con_letras(&(codon[i]), codon_str) == ERROR)
-      return ERROR;
-    bytes_to_send[i] = codon_get_byte(&codon[i]);
-  }
-  return OK;
-}
-
 static size_t leer_archivo(const cliente_t *self, char *buff, bool *eof) {
   size_t f_read = 0;
   size_t b_read = 0;
@@ -127,3 +108,19 @@ static size_t leer_archivo(const cliente_t *self, char *buff, bool *eof) {
   return b_read;
 }
 
+static int obtener_bytes_a_enviar(size_t bytes_read,
+                                  const char *buff,
+                                  char *bytes_to_send) {
+  codon_t codon[BUFF_SEND_LEN];
+  char codon_str[3];
+
+  memset(bytes_to_send, 0, BUFF_SEND_LEN);
+
+  for (int i = 0; i < bytes_read / 3; i++) {
+    strncpy(codon_str, buff + 3 * i, 3);
+    if (codon_crear_con_letras(&(codon[i]), codon_str) == ERROR)
+      return ERROR;
+    bytes_to_send[i] = codon_get_byte(&codon[i]);
+  }
+  return OK;
+}
