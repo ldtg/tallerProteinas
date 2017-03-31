@@ -6,19 +6,29 @@
 
 #IncludeRegexTransform: 
 
-/home/tg/FIUBA/taller/tp1/tp1/buffer.c
-buffer.h
-/home/tg/FIUBA/taller/tp1/tp1/buffer.h
-
-/home/tg/FIUBA/taller/tp1/tp1/buffer.h
-stdio.h
+/home/tg/FIUBA/taller/tp1/tp1/aminoacido.c
+memory.h
 -
+aminoacido.h
+/home/tg/FIUBA/taller/tp1/tp1/aminoacido.h
+
+/home/tg/FIUBA/taller/tp1/tp1/aminoacido.h
 
 /home/tg/FIUBA/taller/tp1/tp1/cliente.c
+sys/socket.h
+-
 cliente.h
 /home/tg/FIUBA/taller/tp1/tp1/cliente.h
+codon.h
+/home/tg/FIUBA/taller/tp1/tp1/codon.h
+string.h
+-
 
 /home/tg/FIUBA/taller/tp1/tp1/cliente.h
+stdio.h
+-
+socket.h
+/home/tg/FIUBA/taller/tp1/tp1/socket.h
 
 /home/tg/FIUBA/taller/tp1/tp1/codigo_genetico.c
 codigo_genetico.h
@@ -27,6 +37,8 @@ codigo_genetico.h
 /home/tg/FIUBA/taller/tp1/tp1/codigo_genetico.h
 codon.h
 /home/tg/FIUBA/taller/tp1/tp1/codon.h
+aminoacido.h
+/home/tg/FIUBA/taller/tp1/tp1/aminoacido.h
 
 /home/tg/FIUBA/taller/tp1/tp1/codon.c
 codon.h
@@ -43,11 +55,15 @@ stdbool.h
 /home/tg/FIUBA/taller/tp1/tp1/main.c
 stdio.h
 -
-codon.h
-/home/tg/FIUBA/taller/tp1/tp1/codon.h
+servidor.h
+/home/tg/FIUBA/taller/tp1/tp1/servidor.h
+cliente.h
+/home/tg/FIUBA/taller/tp1/tp1/cliente.h
 
 /home/tg/FIUBA/taller/tp1/tp1/servidor.c
 stdlib.h
+-
+sys/socket.h
 -
 servidor.h
 /home/tg/FIUBA/taller/tp1/tp1/servidor.h
@@ -59,8 +75,6 @@ stdbool.h
 /home/tg/FIUBA/taller/tp1/tp1/stdbool.h
 string.h
 /home/tg/FIUBA/taller/tp1/tp1/string.h
-codon.h
-/home/tg/FIUBA/taller/tp1/tp1/codon.h
 codigo_genetico.h
 /home/tg/FIUBA/taller/tp1/tp1/codigo_genetico.h
 socket.h
@@ -69,8 +83,6 @@ socket.h
 /home/tg/FIUBA/taller/tp1/tp1/socket.c
 socket.h
 /home/tg/FIUBA/taller/tp1/tp1/socket.h
-stdio.h
--
 errno.h
 -
 string.h
@@ -91,6 +103,4 @@ unistd.h
 /home/tg/FIUBA/taller/tp1/tp1/socket.h
 stdio.h
 -
-buffer.h
-/home/tg/FIUBA/taller/tp1/tp1/buffer.h
 

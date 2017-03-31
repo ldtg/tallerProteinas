@@ -44,14 +44,14 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="/usr/bin/make -j2 -f &quot;/home/tg/FIUBA/taller/tp1/tp1/cmake-build-debug/Makefile&quot;  VERBOSE=1 tp1"/>
@@ -67,14 +67,14 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
-					<Add directory="/usr/include/c++/5"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
-					<Add directory="/usr/include/c++/5/backward"/>
 				</Compiler>
 				<MakeCommands>
 					<Build command="/usr/bin/make -j2 -f &quot;/home/tg/FIUBA/taller/tp1/tp1/cmake-build-debug/Makefile&quot;  VERBOSE=1 tp1/fast"/>
@@ -84,10 +84,10 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/tg/FIUBA/taller/tp1/tp1/buffer.c">
+		<Unit filename="/home/tg/FIUBA/taller/tp1/tp1/aminoacido.c">
 			<Option target="tp1"/>
 		</Unit>
-		<Unit filename="/home/tg/FIUBA/taller/tp1/tp1/buffer.h">
+		<Unit filename="/home/tg/FIUBA/taller/tp1/tp1/aminoacido.h">
 			<Option target="tp1"/>
 		</Unit>
 		<Unit filename="/home/tg/FIUBA/taller/tp1/tp1/cliente.c">

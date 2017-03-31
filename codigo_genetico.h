@@ -5,6 +5,7 @@
 
 #ifndef TP1_CODIGO_GENETICO_H
 #define TP1_CODIGO_GENETICO_H
+
 #include "codon.h"
 #include "aminoacido.h"
 

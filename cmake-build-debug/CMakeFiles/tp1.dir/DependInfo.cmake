@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/tg/FIUBA/taller/tp1/tp1/buffer.c" "/home/tg/FIUBA/taller/tp1/tp1/cmake-build-debug/CMakeFiles/tp1.dir/buffer.c.o"
+  "/home/tg/FIUBA/taller/tp1/tp1/aminoacido.c" "/home/tg/FIUBA/taller/tp1/tp1/cmake-build-debug/CMakeFiles/tp1.dir/aminoacido.c.o"
   "/home/tg/FIUBA/taller/tp1/tp1/cliente.c" "/home/tg/FIUBA/taller/tp1/tp1/cmake-build-debug/CMakeFiles/tp1.dir/cliente.c.o"
   "/home/tg/FIUBA/taller/tp1/tp1/codigo_genetico.c" "/home/tg/FIUBA/taller/tp1/tp1/cmake-build-debug/CMakeFiles/tp1.dir/codigo_genetico.c.o"
   "/home/tg/FIUBA/taller/tp1/tp1/codon.c" "/home/tg/FIUBA/taller/tp1/tp1/cmake-build-debug/CMakeFiles/tp1.dir/codon.c.o"

@@ -5,7 +5,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/tp1.dir/socket.c.o"
   "CMakeFiles/tp1.dir/servidor.c.o"
   "CMakeFiles/tp1.dir/cliente.c.o"
-  "CMakeFiles/tp1.dir/buffer.c.o"
+  "CMakeFiles/tp1.dir/aminoacido.c.o"
   "tp1.pdb"
   "tp1"
 )
