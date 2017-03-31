@@ -12,14 +12,21 @@
 #define ALTO_3 "UGA"
 #define INICIO "AUG"
 
+// Convierte el byte codificado en letras que representan un codon
 static int a_letras(char byte, char *letras);
 
+// Convierte las letras que representan un codon en un byte codificado
 static char a_byte(char *letras);
 
+// Retorna la base i codificada en el byte
 static char obtener_la_base(char byte, int i);
 
+// Retorna true o false dependiendo si las letras representan un codon de
+// alto o no
 static bool es_alto(char *letras);
 
+// Retorna true o false dependiendo si las letras representan un codon de
+// inicio o no
 static bool es_inicio(char *letras);
 
 int codon_crear_con_byte(codon_t *self, char byte) {

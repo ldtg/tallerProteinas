@@ -1,6 +1,3 @@
-//
-// Created by tg on 24/03/17.
-//
 #define _POSIX_C_SOURCE 200112L
 
 #include "socket.h"

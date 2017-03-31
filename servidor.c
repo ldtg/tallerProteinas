@@ -1,7 +1,3 @@
-//
-// Created by tg on 24/03/17.
-//
-
 #include "servidor.h"
 
 //Inicializa las variables contador, cantidad de proteinas y respuesta de self

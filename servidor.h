@@ -1,7 +1,3 @@
-//
-// Created by tg on 24/03/17.
-//
-
 #ifndef TP1_SERVIDOR_H
 #define TP1_SERVIDOR_H
 
