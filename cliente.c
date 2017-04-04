@@ -13,7 +13,6 @@ static int obtener_bytes_a_enviar(size_t bytes_read,
 
 int cliente_crear(cliente_t *self, FILE *file, char *host, char *service) {
   int err_create = ERROR;
-  int err_connect = ERROR;
 
   self->host = host;
   self->service = service;
@@ -25,10 +24,6 @@ int cliente_crear(cliente_t *self, FILE *file, char *host, char *service) {
 
   err_create = socket_create(&(self->socket));
   if (err_create == ERROR)
-    return ERROR;
-
-  err_connect = socket_connect(&(self->socket), host, service);
-  if (err_connect == ERROR)
     return ERROR;
 
   return OK;
@@ -49,10 +44,15 @@ int cliente_enviar_datos(cliente_t *self) {
   int bytes_send = 0;
   size_t bytes_read = 0;
   int total_bytes_read = 0;
-  int err;
+  int err, err_connect;
   char bytes_to_send[BUFF_SEND_LEN];
   char buff[BUFF_READ_LEN];
   bool eof = false;
+
+
+  err_connect = socket_connect(&(self->socket), self->host, self->service);
+  if (err_connect == ERROR)
+    return ERROR;
 
   do {
     bytes_read = leer_archivo(self, buff, &eof);
@@ -95,8 +95,8 @@ static size_t leer_archivo(const cliente_t *self, char *buff, bool *eof) {
 
   f_read = fread(buff, 1, BUFF_READ_LEN, self->in_file);
 
-  if (f_read < BUFF_READ_LEN && strlen(buff) > 0) {
-    if (buff[f_read - 1] == '\n')
+  if (f_read < BUFF_READ_LEN && strlen(buff) > 0) { // Finalizo el archivo
+    if (buff[f_read - 1] == '\n') //Quita el \n del final de los archivos
       b_read = strlen(buff) - 1;
     else
       b_read = strlen(buff);
@@ -116,8 +116,10 @@ static int obtener_bytes_a_enviar(size_t bytes_read,
 
   memset(bytes_to_send, 0, BUFF_SEND_LEN);
 
-  for (int i = 0; i < bytes_read / 3; i++) {
-    strncpy(codon_str, buff + 3 * i, 3);
+  for (int i = 0; i < bytes_read / 3; i++) { // bytes_read/3 es la cantidad
+                                            // de codones leidos
+    strncpy(codon_str, buff + 3 * i, 3); // Por cada ciclo lee de a 3 char
+                                        // del buff
     if (codon_crear_con_letras(&(codon[i]), codon_str) == ERROR)
       return ERROR;
     bytes_to_send[i] = codon_get_byte(&codon[i]);

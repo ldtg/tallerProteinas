@@ -2,14 +2,14 @@
 #include "aminoacido.h"
 
 static char *AMINOACIDO_STRING_PRINT[] = {
-    "Fenilanina", "Leucina", "Serina", "Tirosina", "Cisteína", "Triptófano",
+    "Fenilalanina", "Leucina", "Serina", "Tirosina", "Cisteína", "Triptófano",
     "Prolina",
     "Histidina", "Ácido glutámico", "Isoleucina", "Metionina", "Treonina",
     "Asparagina",
     "Lisina", "Arginina", "Valina", "Alanina", "Ácido aspártico", "Glicina"
 };
 static char *AMINOACIDO_STRING[] = {
-    "Fenilanina", "Leucina", "Serina", "Tirosina", "Cisteina", "Triptofano",
+    "Fenilalanina", "Leucina", "Serina", "Tirosina", "Cisteina", "Triptofano",
     "Prolina",
     "Histidina", "Acido glutamico", "Isoleucina", "Metionina", "Treonina",
     "Asparagina",
@@ -19,7 +19,7 @@ static char *AMINOACIDO_STRING[] = {
 int aminoacido_crear(aminoacido_t *self, aminoacido_e aminoacido) {
   self->aminoacido = aminoacido;
   strncpy(self->str_aminoacido,
-          AMINOACIDO_STRING[aminoacido],
+          AMINOACIDO_STRING[aminoacido], //guarda el string para comparar
           MAX_LEN_AMINOACIDO);
   return OK;
 }
@@ -29,7 +29,8 @@ int aminoacido_destruir(aminoacido_t *self) {
 }
 
 int aminoacido_to_string(aminoacido_t *self, char *dest) {
-  strncpy(dest, AMINOACIDO_STRING_PRINT[self->aminoacido], MAX_LEN_AMINOACIDO);
+  strncpy(dest, AMINOACIDO_STRING_PRINT[self->aminoacido],
+          MAX_LEN_AMINOACIDO);// devuelve el string para imprimir
   return OK;
 }
 

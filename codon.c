@@ -71,10 +71,11 @@ bool codon_es_igual(codon_t *self, char *letras) {
 
 static int a_letras(char byte, char *letras) {
   char aux[3];
-  for (int i = 0; i <= 4; i = i + 2) {
+  for (int i = 0; i <= 4; i = i + 2) { //4 conjuntos de 2 bits en un byte
     switch (obtener_la_base(byte, i)) {
       case BASE_A: {
-        aux[2 - i / 2] = 'A';
+        aux[2 - i / 2] = 'A'; // 2-i/2 para los i dados retorna 2, 1, 0
+                         // copiando los char en la cadena en el orden correcto
         break;
       }
       case BASE_U: {
@@ -107,7 +108,10 @@ static char a_byte(char *letras) {
   for (int i = 2; i >= 0; i--) {
     switch (letras[i]) {
       case 'A': {
-        aux = aux + (char) (BASE_A << (-2 * i + 4));
+        aux = aux + (char) (BASE_A << (-2 * i + 4)); // -2i+4 para los i
+        // dados retorna 0 2 4 que corresponde a la cantidad de movimientos a
+        // izquierda de los bits de la base para lograr formar el byte del
+        // codon
         break;
       }
       case 'U': {

@@ -73,7 +73,8 @@ int servidor_recibir_datos(servidor_t *self) {
     return ERROR;
 
   do {
-    memset(codon_byte, -1, BUFF_RECV_LEN);
+    memset(codon_byte, -1, BUFF_RECV_LEN); //Se inicializa en -1 porque 0 es
+                                            // un byte valido para un codon
     rcv_status = socket_receive(&(self->socket_recibidor),
                                 &codon_byte, sizeof(codon_byte));
     bytes_rcv = obtener_cant_bytes_rcv(rcv_status, codon_byte);
@@ -146,7 +147,7 @@ static int obtener_cant_bytes_rcv(int rcv_status, char *codon_byte) {
 static int byte_len(char *codon_byte) {
   int cont = 0;
   for (int i = 0; i < BUFF_RECV_LEN; i++) {
-    if (codon_byte[i] != -1)
+    if (codon_byte[i] != -1) // Se inicializo en -1
       cont++;
   }
   return cont;
